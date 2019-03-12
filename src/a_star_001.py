@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import math
 
 
 class Node(object):
@@ -60,6 +61,7 @@ def astar(maze, start, goal):
                 cur_ind = i
         gray_list.pop(cur_ind)
         visited.append(cur_node)
+        #print(cur_node.position)
 
         # Goal found
         if cur_node == enode:
@@ -82,22 +84,39 @@ def astar(maze, start, goal):
             # Make sure walkable terrain
             if maze[node_position[0]][node_position[1]] != 0:
                 continue
+
             new_node = Node(cur_node, node_position)
             children.append(new_node)
 
         for child in children:
-            for vis_child in visited:
-                if child == vis_child:
-                    continue
+            # for vis_child in visited:
+            #     if child == vis_child:
+            #         continue
+            if child in visited:
+                continue
             child.dist = cur_node.dist + 1
-            child.heuristic = ((child.position[0] - enode.position[0]) ** 2)\
-                              + ((child.position[1] - enode.position[1]) ** 2)
+
+            # Eculidean Squared
+            # child.heuristic = ((child.position[0] - enode.position[0]) ** 2) \
+            #                    + ((child.position[1] - enode.position[1]) ** 2)
+
+            # Euclidean distance
+            # child.heuristic = math.sqrt(((child.position[0] - enode.position[0]) ** 2)
+            #                             + ((child.position[1] - enode.position[1]) ** 2))
+
+            # Modifying with Diagonal distance
+            child.heuristic = max(abs(child.position[0] - enode.position[0])
+                                  , abs(child.position[1] - enode.position[1]))
             child.val = child.dist + child.heuristic
 
+            is_cur = False
             for gray_node in gray_list:
                 if child == gray_node and child.val > gray_node.val:
-                    continue
-            gray_list.append(child)
+                    is_cur = True
+                    break
+            if not is_cur:
+                gray_list.append(child)
+        #print(len(gray_list))
 
 
 def main():
