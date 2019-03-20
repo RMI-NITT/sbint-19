@@ -49,7 +49,7 @@ def summa():
     rospy.init_node('autogk',anonymous=True)
     r1 = rospy.Publisher('bot1mov',mov, queue_size = 10)
     rospy.Subscriber('ballpose', Pose, bcallback)
-    rospy.Subscriber('botpose', Pose, botcallback)    
+    rospy.Subscriber('bot1pose', Pose, botcallback)    
     rospy.Subscriber('balltwist', Twist, btcallback)
     updatebpose(bpose,ball)
     updatebtwist(btwist,ballv)
@@ -69,9 +69,9 @@ def summa():
                 th = m.atan(m0)
                 th = 3.14 + th
                 q = m.tan(th/2)
-                k = 250
+                k = 210
                 xb= ball.x
-                yb= int(ball.y*1.5)
+                yb= ball.y
                 xtg = k
                 ytg = m0*(k-xb)+yb
                 if abs(ytg)>=150:
@@ -82,7 +82,7 @@ def summa():
                 r.thetap = m.pi
                 r1.publish(r)
             else:  
-                r.x = 250
+                r.x = -210
                 r.y = 0
                 r.mode = 1
                 r.thetap = m.pi
