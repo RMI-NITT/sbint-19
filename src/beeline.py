@@ -44,12 +44,10 @@ def summa():
     global robot
     global ball
     global ballv
-    global d
-    global gs
     rospy.init_node('autogk',anonymous=True)
     r1 = rospy.Publisher('bot1mov',mov, queue_size = 10)
     rospy.Subscriber('ballpose', Pose, bcallback)
-    rospy.Subscriber('botpose', Pose, botcallback)    
+    rospy.Subscriber('bot1pose', Pose, botcallback)    
     rospy.Subscriber('balltwist', Twist, btcallback)
     updatebpose(bpose,ball)
     updatebtwist(btwist,ballv)
@@ -64,33 +62,12 @@ def summa():
         while(True):
             updatebpose(bpose,ball)
             updatebtwist(btwist,ballv)
-            if not(ballv.x == 0):
-                m0 = ballv.y/ballv.x
-                th = m.atan(m0)
-                th = 3.14 + th
-                q = m.tan(th/2)
-                k = 250
-                xb= ball.x
-                yb= int(ball.y*1.5)
-                xtg = k
-                ytg = m0*(k-xb)+yb
-                if abs(ytg)>=150:
-                    ytg = 0
-                r.x = xtg
-                r.y = ytg  
-                r.mode = 1
-                r.thetap = m.pi
-                r1.publish(r)
-            else:  
-                r.x = 250
-                r.y = 0
-                r.mode = 1
-                r.thetap = m.pi
-                r1.publish(r)
-
+            r.x = ball.x
+            r.y = ball.y
+            r.thetap = g.angb(ball,robot)
+            r1.publish(r)
             rate.sleep()
             
 
 if __name__ == '__main__':
     summa()
-    
